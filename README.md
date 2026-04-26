@@ -20,7 +20,7 @@ No signup. Pull, run, hit it.
 docker run -p 8080:8080 \
   -e ENCRYPTION_KEY=$(openssl rand -hex 32) \
   -e BETTER_AUTH_SECRET=$(openssl rand -hex 32) \
-  ghcr.io/triggo/runtime:dev-preview
+  ghcr.io/triggoapp/triggo-runtime:dev-preview
 ```
 
 Define a workflow (`hello.yaml`):
