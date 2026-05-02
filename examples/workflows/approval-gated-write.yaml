@@ -1,0 +1,9 @@
+name: Approval-gated write
+entrypoint:
+  kind: tool
+  slug: http.request
+input:
+  method: POST
+  url: https://postman-echo.com/post
+  body: '{"message":"approval required"}'
+  approvalRequired: true

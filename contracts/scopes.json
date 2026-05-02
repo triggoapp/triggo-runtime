@@ -1,0 +1,7 @@
+[
+  "actions:read",
+  "actions:run",
+  "approvals:decide",
+  "connectors:read",
+  "runs:read"
+]

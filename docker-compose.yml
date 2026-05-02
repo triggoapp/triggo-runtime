@@ -1,0 +1,32 @@
+services:
+  triggo-runtime:
+    image: ghcr.io/triggoapp/triggo-runtime:0.1.0
+    ports:
+      - "8090:8090"
+    environment:
+      RUNTIME_PORT: "8090"
+      DATABASE_URL: postgres://triggo:triggo@postgres:5432/triggo
+      REDIS_URL: redis://redis:6379
+      RUNTIME_API_KEYS: ${TRIGGO_RUNTIME_API_KEY}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: triggo
+      POSTGRES_PASSWORD: triggo
+      POSTGRES_DB: triggo
+    volumes:
+      - triggo_runtime_postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:8-alpine
+    volumes:
+      - triggo_runtime_redis:/data
+
+volumes:
+  triggo_runtime_postgres:
+  triggo_runtime_redis:

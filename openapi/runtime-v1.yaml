@@ -1,0 +1,312 @@
+openapi: 3.1.0
+info:
+  title: Triggo Runtime API
+  version: 2026-04-29
+paths:
+  /tools:
+    get:
+      operationId: listRuntimeTools
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Runtime tool registry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RuntimeToolList"
+  /tools/{slug}/call:
+    post:
+      operationId: callRuntimeTool
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: dryRun
+          in: query
+          required: false
+          schema:
+            type: boolean
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "200":
+          description: Runtime tool invocation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RuntimeRunAccepted"
+  /runs:
+    get:
+      operationId: listRuntimeRuns
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Runtime run list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RuntimeRunList"
+  /runs/{runId}:
+    get:
+      operationId: getRuntimeRun
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: runId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Runtime run detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RuntimeRunDetail"
+        "404":
+          description: Runtime run not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RuntimeError"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    RuntimeError:
+      type: object
+      required:
+        - code
+        - error
+      properties:
+        code:
+          type: string
+        error:
+          type: string
+        details:
+          type: array
+          items: {}
+    RuntimeRunAccepted:
+      type: object
+      required:
+        - runId
+        - status
+      additionalProperties: true
+      properties:
+        runId:
+          type: string
+        status:
+          type: string
+    RuntimeOperation:
+      type: object
+      required:
+        - version
+        - type
+        - auth
+        - source
+        - payload
+      properties:
+        version:
+          type: string
+          const: 2026-04-29
+        type:
+          type: string
+          enum:
+            - EXECUTE_WORKFLOW
+            - INVOKE_TOOL
+            - HANDLE_TRIGGER
+            - DRY_RUN
+            - RESUME_RUN
+            - APPROVE_RUN
+            - REPLAY_RUN
+            - GET_RUN
+            - LIST_RUNS
+            - LIST_TOOLS
+        source:
+          type: string
+        auth:
+          type: object
+          required:
+            - workspaceId
+            - scopes
+            - source
+          properties:
+            workspaceId:
+              type: string
+            apiKeyId:
+              type: string
+            userId:
+              type: string
+            scopes:
+              type: array
+              items:
+                type: string
+            source:
+              type: string
+          additionalProperties: true
+        payload:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+    RuntimeRunDetail:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          type: string
+        runId:
+          type: string
+        status:
+          type: string
+    RuntimeRunList:
+      type: object
+      required:
+        - runs
+      properties:
+        runs:
+          type: array
+          items:
+            $ref: "#/components/schemas/RuntimeRunDetail"
+        total:
+          type: number
+      additionalProperties: true
+    RuntimeToolList:
+      type: object
+      required:
+        - tools
+      properties:
+        tools:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+x-runtime-tools:
+  - slug: http.request
+    name: HTTP Request
+    inputSchema:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+        method:
+          type: string
+          enum:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+            - HEAD
+          default: GET
+        headers:
+          type: object
+        query_params:
+          type: object
+        body:
+          type: string
+        follow_redirects:
+          type: boolean
+          default: false
+    requiredScopes:
+      - actions:run
+    supportsDryRun: true
+    connectorRef:
+      integrationCode: http-request
+      operationName: http_request
+    schemaHash: 49291aea5ad1241d
+  - slug: inbound-webhook.receive
+    name: Inbound Webhook
+    inputSchema:
+      type: object
+      properties:
+        payload: {}
+    requiredScopes:
+      - actions:run
+    supportsDryRun: true
+    connectorRef:
+      integrationCode: inbound-webhook
+      operationName: receive_webhook
+    schemaHash: fb5f89045f2d1cb9
+  - slug: schedule.trigger
+    name: Schedule
+    inputSchema:
+      type: object
+      properties:
+        timestamp:
+          type: string
+    requiredScopes:
+      - actions:run
+    supportsDryRun: true
+    connectorRef:
+      integrationCode: schedule
+      operationName: schedule_trigger
+    schemaHash: 838e523e3880e6e2
+  - slug: slack.send-message
+    name: Slack Send Message
+    inputSchema:
+      type: object
+      required:
+        - channel
+        - text
+      properties:
+        channel:
+          type: string
+        text:
+          type: string
+    requiredScopes:
+      - actions:run
+    supportsDryRun: true
+    connectorRef:
+      integrationCode: slack
+      operationName: send_message
+    schemaHash: bddce5c810f42638
+x-runtime-operations:
+  - type: EXECUTE_WORKFLOW
+    description: Execute an approved workflow through the runtime host.
+  - type: INVOKE_TOOL
+    description: Invoke a registry-backed runtime tool.
+  - type: HANDLE_TRIGGER
+    description: Handle a webhook or schedule trigger.
+  - type: DRY_RUN
+    description: Evaluate an operation without performing write effects.
+  - type: RESUME_RUN
+    description: Resume a paused or waiting runtime run.
+  - type: APPROVE_RUN
+    description: Record an approval decision for a pending run.
+  - type: REPLAY_RUN
+    description: Replay a failed run while preserving audit lineage.
+  - type: GET_RUN
+    description: Read a runtime run and its public journal view.
+  - type: LIST_RUNS
+    description: List runtime runs for the authenticated workspace.
+  - type: LIST_TOOLS
+    description: List registry-backed runtime tool definitions.
+x-runtime-errors:
+  - BAD_REQUEST
+  - UNAUTHORIZED
+  - FORBIDDEN
+  - NOT_FOUND
+  - ACTION_NOT_FOUND
+  - RUN_NOT_FOUND
+  - ACTION_UNAVAILABLE
+  - INPUT_VALIDATION_FAILED
+  - IDEMPOTENCY_CONFLICT
+  - RATE_LIMIT_EXCEEDED
+  - UNSUPPORTED_ENTRYPOINT
+  - INTERNAL_SERVER_ERROR

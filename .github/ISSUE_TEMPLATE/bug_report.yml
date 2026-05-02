@@ -1,0 +1,14 @@
+name: Bug report
+description: Report a Developer Preview runtime issue
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Reproduction evidence
+      description: Include commands, runtime version, and sanitized logs.

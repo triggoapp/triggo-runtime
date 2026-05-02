@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "triggo-runtime": {
+      "url": "http://localhost:8090/mcp",
+      "headers": {
+        "Authorization": "Bearer ${TRIGGO_RUNTIME_API_KEY}"
+      }
+    }
+  }
+}

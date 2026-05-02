@@ -1,0 +1,8 @@
+name: HTTP Echo
+entrypoint:
+  kind: tool
+  slug: http.request
+input:
+  method: GET
+  url: https://postman-echo.com/get
+  follow_redirects: false

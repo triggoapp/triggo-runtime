@@ -1,0 +1,7 @@
+name: Approved workflow as MCP tool
+entrypoint:
+  kind: tool
+  slug: http.request
+input:
+  method: GET
+  url: https://postman-echo.com/get

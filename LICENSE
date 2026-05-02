@@ -1,0 +1,18 @@
+MIT License
+
+Copyright (c) 2026 Triggo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the documentation, examples, and workflow files in this repository to deal
+in those files without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of those files, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of those files.
+
+This license does not apply to the Triggo Runtime container image, runtime
+source code, hosted SaaS source code, trademarks, or private connector
+implementations. The runtime image is governed by EULA.md.
+
+THE FILES ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.

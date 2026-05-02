@@ -1,0 +1,104 @@
+{
+  "name": "triggo-runtime",
+  "operations": [
+    {
+      "type": "INVOKE_TOOL",
+      "description": "Invoke a registry-backed runtime tool."
+    },
+    {
+      "type": "DRY_RUN",
+      "description": "Evaluate an operation without performing write effects."
+    },
+    {
+      "type": "APPROVE_RUN",
+      "description": "Record an approval decision for a pending run."
+    },
+    {
+      "type": "REPLAY_RUN",
+      "description": "Replay a failed run while preserving audit lineage."
+    }
+  ],
+  "tools": [
+    {
+      "name": "http.request",
+      "description": "HTTP Request",
+      "inputSchema": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"],
+            "default": "GET"
+          },
+          "headers": {
+            "type": "object"
+          },
+          "query_params": {
+            "type": "object"
+          },
+          "body": {
+            "type": "string"
+          },
+          "follow_redirects": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "requiredScopes": ["actions:run"],
+      "supportsDryRun": true,
+      "schemaHash": "49291aea5ad1241d"
+    },
+    {
+      "name": "inbound-webhook.receive",
+      "description": "Inbound Webhook",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "payload": {}
+        }
+      },
+      "requiredScopes": ["actions:run"],
+      "supportsDryRun": true,
+      "schemaHash": "fb5f89045f2d1cb9"
+    },
+    {
+      "name": "schedule.trigger",
+      "description": "Schedule",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "requiredScopes": ["actions:run"],
+      "supportsDryRun": true,
+      "schemaHash": "838e523e3880e6e2"
+    },
+    {
+      "name": "slack.send-message",
+      "description": "Slack Send Message",
+      "inputSchema": {
+        "type": "object",
+        "required": ["channel", "text"],
+        "properties": {
+          "channel": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "requiredScopes": ["actions:run"],
+      "supportsDryRun": true,
+      "schemaHash": "bddce5c810f42638"
+    }
+  ]
+}
